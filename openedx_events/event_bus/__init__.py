@@ -2,7 +2,6 @@
 
 import warnings
 from abc import ABC, abstractmethod
-from functools import lru_cache
 from typing import NoReturn, Optional
 
 from django.conf import settings
@@ -25,13 +24,19 @@ def try_load(setting_name: str, expected_class: type, default):
         expected_class: The loader must produce an instance of this class object (or a subclass)
         default: Object to return if any part of the lookup or loading fails
     """
+    constructor_path = getattr(settings, setting_name, None)
+    if constructor_path is None:
+        # No warning is called for if event-bus is not configured-for at *all*
+        return default
+
     try:
-        constructor = import_string(getattr(settings, setting_name))
+        constructor = import_string(constructor_path)
         instance = constructor()
         if isinstance(instance, expected_class):
             return instance
         else:
-            raise Exception(f"{constructor} returned unexpected type {type(instance)}")
+            warnings.warn(f"{constructor_path} returned unexpected type {type(instance)}", UserWarning)
+            return default
     except BaseException as e:
         warnings.warn(f"Failed to load {expected_class} from setting '{setting_name}': {e!r}", UserWarning)
         return default
@@ -71,14 +76,16 @@ class NoEventBusProducer(EventBusProducer):
         """Do nothing."""
 
 
-@lru_cache(maxsize=1)
-def get_producer() -> EventBusProducer:
+def make_producer() -> EventBusProducer:
     """
-    Get or create the configured producer implementation.
+    Create the producer implementation, as configured.
 
-    If misconfigured, returns a fake implementation that canbe called but does nothing.
+    If misconfigured, returns a fake implementation that can be called but does nothing.
     """
     return try_load('EVENT_BUS_PRODUCER', EventBusProducer, NoEventBusProducer())
+
+
+PRODUCER = make_producer()
 
 
 # == Consumer ==
@@ -111,11 +118,13 @@ class NoEventBusConsumer(EventBusConsumer):
         """Do nothing."""
 
 
-@lru_cache(maxsize=1)
-def get_consumer() -> EventBusConsumer:
+def make_consumer() -> EventBusConsumer:
     """
-    Get or create the configured consumer implementation.
+    Create the consumer implementation, as configured.
 
-    If misconfigured, returns a fake implementation that canbe called but does nothing.
+    If misconfigured, returns a fake implementation that can be called but does nothing.
     """
     return try_load('EVENT_BUS_CONSUMER', EventBusConsumer, NoEventBusConsumer())
+
+
+CONSUMER = make_consumer()

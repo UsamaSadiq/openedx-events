@@ -13,8 +13,10 @@ Change Log
 
 Unreleased
 ----------
-Changed
-~~~~~~~
+
+Added
+~~~~~
+* Event bus implementation loaders in ``openedx_events.event_bus``.
 
 [0.11.1] - 2022-07-28
 ---------------------
@@ -25,7 +27,7 @@ Fixed
 [0.11.0] - 2022-07-21
 ---------------------
 Added
-~~~~~~~
+~~~~~
 * Added new content_authoring module with new COURSE_CATALOG_INFO_CHANGED signal
 
 [0.10.0] - 2022-05-20
