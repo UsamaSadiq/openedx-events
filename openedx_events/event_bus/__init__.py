@@ -58,7 +58,7 @@ class EventBusProducer(ABC):
 
         Arguments:
             signal: The original OpenEdxPublicSignal the event was sent to
-            topic: The event bus topic for the event (without environmental prefix)
+            topic: The event bus topic for the event (without any environmental prefix)
             event_key_field: Path to the event data field to use as the event key (period-delimited
               string naming the dictionary keys to descend)
             event_data: The event data (kwargs) sent to the signal
@@ -104,7 +104,7 @@ class EventBusConsumer(ABC):
         Events will be converted into calls to Django signals.
 
         Arguments:
-            topic: The event bus topic to consume from (without environmental prefix)
+            topic: The event bus topic to consume from (without any environmental prefix)
             group_id: The consumer group to participate in.
         """
 
