@@ -69,12 +69,12 @@ Every time you develop something in this repo
 Deploying
 =========
 
-TODO: How can a new user go about deploying this component? Is it just a few
-commands? Is there a larger how-to that should be linked here?
+The Open edX Events component is a Python library which doesn't need independent deployment. Therefore,
+its setup is reasonably straightforward. First, it needs to be added to your service requirements,
+and then it will be installed alongside requirements of the service.
 
-PLACEHOLDER: For details on how to deploy this component, see the `deployment how-to`_
-
-.. _deployment how-to: https://docs.openedx.org/projects/openedx-events/how-tos/how-to-deploy-this-component.html
+If the service you intend to use is either the LMS or CMS, then the library is installed alongside
+their requirements since the Maple release.
 
 Getting Help
 ************
